@@ -124,12 +124,12 @@ class TestClient < Test::Unit::TestCase
     
     context "post to URL" do
       
-      should "return true when successful" do
+      should "return message body when successful" do
         Net::HTTP.any_instance.
           expects(:post).
           with("/callbacks/example", "client_id=jonny&session_id=#{@request[:session_id]}&channels[]=master&channels[]=slave", {"User-Agent" => "Ruby/#{RUBY_VERSION}"}).
           returns([Net::HTTPOK.new('1.1', '200', 'OK'), ''])
-        assert_equal true, @client.send(:post_request, EXAMPLE_URL, %w(master slave))
+        assert_equal "", @client.send(:post_request, EXAMPLE_URL, %w(master slave))
       end
       
       should "return false on an internal server error" do
@@ -149,10 +149,10 @@ class TestClient < Test::Unit::TestCase
       
       context "using a secure URL" do
         
-        should "return true when successful" do
-          Net::HTTP.any_instance.expects(:post).returns([Net::HTTPOK.new('1.1', '200', 'OK'), ''])
+        should "return response body when successful" do
+          Net::HTTP.any_instance.expects(:post).returns([Net::HTTPOK.new('1.1', '200', 'OK'), 'body'])
           Net::HTTP.any_instance.expects(:use_ssl=).with(true).returns(true)
-          assert_equal true, @client.send(:post_request, SECURE_URL, %w(master slave))
+          assert_equal 'body', @client.send(:post_request, SECURE_URL, %w(master slave))
         end
         
       end

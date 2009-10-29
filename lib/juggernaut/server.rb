@@ -285,10 +285,22 @@ module Juggernaut
         
         @client = Juggernaut::Client.find_or_create(self, @request)
         
-        if !@client.subscription_request(@channels)
+        data = @client.subscription_request(@channels)
+        if !data
           raise UnauthorisedSubscription, @client
         end
-        
+
+        messages =[]
+        begin
+          messages = JSON.parse data.to_s.to_s
+          messages = [messages] unless messages.is_a? Array
+        rescue JSON::ParserError => e
+        end
+
+        messages.each do |message|
+          @client.send_message(message, @channels)
+        end
+
         if options[:store_messages]
           @client.send_queued_messages(self)
         end

@@ -223,7 +223,7 @@ module Juggernaut
         end
         http.read_timeout = options[:timeout] || 5
         resp, data = http.post(uri.path, params.join('&'), headers)
-        return resp.is_a?(Net::HTTPOK)
+        return resp.is_a?(Net::HTTPOK) ? data : false
       rescue => e
         logger.error("Bad request #{url.to_s} (#{e.class}: #{e.message})")
         return false
