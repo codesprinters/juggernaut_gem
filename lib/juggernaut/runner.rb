@@ -44,7 +44,7 @@ module Juggernaut
       Process.euid = options[:user] if options[:user]
       Process.egid = options[:group] if options[:group]
       
-      if !options[:daemonize]
+      if !options[:daemonize] or RUBY_PLATFORM == 'java'
         start
       else
         daemonize
