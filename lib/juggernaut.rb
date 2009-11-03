@@ -1,4 +1,7 @@
-require 'rubygems'
+begin
+  require 'rubygems'
+rescue LoadError => le
+end
 require 'logger'
 require 'eventmachine'
 require 'json'
@@ -125,10 +128,11 @@ module Juggernaut
       return @@logger if defined?(@@logger) && !@@logger.nil?
       FileUtils.mkdir_p(File.dirname(log_path))
       @@logger = Logger.new(log_path)
-      @@logger.level = Logger::INFO if options[:debug] == false
-      @@logger
     rescue
       @@logger = Logger.new(STDOUT)
+    ensure
+      @@logger.level = Logger::INFO if options[:debug] == false
+      @@logger
     end
     
     def logger=(logger)
