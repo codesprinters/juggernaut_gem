@@ -8,7 +8,12 @@ module Juggernaut
     
     class << self
       def run(argv = ARGV)
-        self.new(argv)
+        client = self.new(argv)
+        if !options[:daemonize] or RUBY_PLATFORM == 'java' 
+          client.start
+        else
+          client.daemonize
+        end
       end
     end
     
@@ -43,12 +48,8 @@ module Juggernaut
       
       Process.euid = options[:user] if options[:user]
       Process.egid = options[:group] if options[:group]
-      
-      if !options[:daemonize] or RUBY_PLATFORM == 'java'
-        start
-      else
-        daemonize
-      end
+   
+      return self
     end
     
     def start
