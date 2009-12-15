@@ -9,7 +9,7 @@ module Juggernaut
     class << self
       def run(argv = ARGV)
         client = self.new(argv)
-        if !options[:daemonize] or RUBY_PLATFORM == 'java' 
+        if !client.options[:daemonize] or RUBY_PLATFORM == 'java' 
           client.start
         else
           client.daemonize
